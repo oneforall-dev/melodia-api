@@ -2,14 +2,14 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { Client } = require("pg"); // <-- usar require, no import
+const { Client } = require("pg");   // <<--- CORREGIDO
 
 const app = express();
 
 // permitir peticiones desde tu frontend de Netlify
 app.use(
   cors({
-    origin: "https://melodia-charts.netlify.app",
+    origin: "https://melodia-charts.netlify.app"
   })
 );
 
@@ -25,7 +25,7 @@ app.get("/ping", (req, res) => {
   res.send("pong 🥁");
 });
 
-// ---- TEST DB ----
+// Test DB
 app.get("/db-test", async (req, res) => {
   try {
     const client = new Client({
@@ -39,8 +39,7 @@ app.get("/db-test", async (req, res) => {
 
     res.json({ ok: true, time: result.rows[0].now });
   } catch (err) {
-    console.error("DB error:", err);
-    res.status(500).json({ ok: false, error: err.message });
+    res.json({ ok: false, error: err.message });
   }
 });
 
@@ -49,4 +48,3 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log("API escuchando en puerto", PORT);
 });
-
