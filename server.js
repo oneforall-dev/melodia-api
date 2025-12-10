@@ -23,6 +23,27 @@ app.get("/", (req, res) => {
 app.get("/ping", (req, res) => {
   res.send("pong 🥁");
 });
+// Test DB
+import pkg from 'pg';
+const { Client } = pkg;
+
+app.get("/db-test", async (req, res) => {
+  try {
+    const client = new Client({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+    });
+
+    await client.connect();
+    const result = await client.query("SELECT NOW()");
+    await client.end();
+
+    res.json({ ok: true, time: result.rows[0].now });
+  } catch (err) {
+    res.json({ ok: false, error: err.message });
+  }
+});
+
 
 // Render pondrá el puerto en process.env.PORT
 const PORT = process.env.PORT || 3001;
